@@ -3,3 +3,5 @@
   tasks:
   - name: PLAY-01 TASK-01
     ansible.builtin.debug:
+  - name: PLAY-01 TASK-02
+    ansible.builtin.ping:
