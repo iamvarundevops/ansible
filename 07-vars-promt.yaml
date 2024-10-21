@@ -1,0 +1,12 @@
+- name: variables from the prompt
+  hosts:  web
+  vars_promt:
+  - name: COURSE
+    prompt: "Please enter the course name"
+  - name: TRAINER
+    prompt: Please enter the TRAINER
+  - name: DURATION
+    prompt: Please enter the Duration
+  tasks:
+  - name: print the course infromation
+      msg: "Hi, I am Learning {{COURSE}}, Duration is: {{DURATION}}, Trainer: {{TRAINER}}"
