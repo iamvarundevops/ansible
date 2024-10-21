@@ -9,4 +9,5 @@
     prompt: Please enter the Duration
   tasks:
   - name: print the course infromation
+    ansible.builtin.debug:
       msg: "Hi, I am Learning {{COURSE}}, Duration is: {{DURATION}}, Trainer: {{TRAINER}}"
