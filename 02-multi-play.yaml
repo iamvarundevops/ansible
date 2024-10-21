@@ -1,3 +1,4 @@
+#PLAY-01
 - name: PLAY-01
   hosts:  web
   tasks:
@@ -6,6 +7,8 @@
       msg: "This is from PLAY-01 and TASK-01"
   - name: PLAY-01 TASK-02
     ansible.builtin.ping:
+
+#PLAY-02
 - name: PLAY-02
   hosts:  web
   tasks:
