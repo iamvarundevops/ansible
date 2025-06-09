@@ -5,4 +5,4 @@
     ansible.windows.win_ping:
   - name: Induce an exception to see what happens
     ansible.windows.win_ping:
-    data: crash
+      data: crash
