@@ -3,7 +3,7 @@
   vars_prompt:
   - name: COURSE
     prompt: "Please enter name of the COURSE"
-    priavate: false
+    private: false
   - name: DURATION
     prompt: "Please enter duration"
     private: false
