@@ -14,6 +14,6 @@
   tasks:
   - name: PLAY-02 and TASK-01
     ansible.builtin.debug:
-    msg:  "This is from PLAY-02 and TASK01"
+      msg:  "This is from PLAY-02 and TASK01"
   - name: PLAY-02 and TASK-02
     ansible.builtin.ping:
