@@ -6,4 +6,4 @@
   tasks:
   - name: print the information variables from inventory
     ansible.builtin.debug:
-    msg: "HI, I am learning {{COURSE}}, Duration is {{DURATION}}, Trainer: {{TRAINER}}"
+      msg: "HI, I am learning {{COURSE}}, Duration is {{DURATION}}, Trainer: {{TRAINER}}"
