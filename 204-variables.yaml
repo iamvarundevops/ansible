@@ -7,4 +7,4 @@
   tasks:
   - name: print the information
     ansible.builtin.debug:
-      msg: "HI, I am learning DevOps with AWS, Duration is 120 HOURS, Trainer: Sivakumar"
+      msg: "HI, I am learning {{COURSE}}, Duration is {{DURATION}}, Trainer: {{TRAINER}}"
