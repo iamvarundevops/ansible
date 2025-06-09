@@ -1,0 +1,9 @@
+- name: variables from files
+  hosts: web
+  become: yes
+  vars_files:
+  - vars2.yaml
+  tasks:
+  - name: print the course information
+    ansible.builtin.debug:
+      msg: "Hi, I am learning {{COURSE}}, DURATION is {{DURATION}}, Trainer {{TRAINER}}"
