@@ -1,0 +1,45 @@
+- name: Install Apache Tomcat 9.0.102 on Windows
+  hosts: web
+  gather_facts: no
+  vars:
+    tomcat_version: "9.0.102"
+    tomcat_major: "9"
+    tomcat_base_dir: "C:\Tomcat"
+    tomcat_extract_dir: "{{ tomcat_base_dir }}\apache-tomcat-{{ tomcat_version }}"
+    tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
+    tomcat_zip_path: "{{ tomcat_base_dir }}\apache-tomcat-{{ tomcat_version }}.zip"
+
+  tasks:
+    - name: Ensure Tomcat base directory exists
+      ansible.windows.win_file:
+        path: "{{ tomcat_base_dir }}"
+        state: directory
+
+    - name: Download Apache Tomcat {{ tomcat_version }}
+      ansible.windows.win_get_url:
+        url: "{{ tomcat_url }}"
+        dest: "{{ tomcat_zip_path }}"
+
+    - name: Extract Tomcat
+      community.windows.win_unzip:
+        src: "{{ tomcat_zip_path }}"
+        dest: "{{ tomcat_base_dir }}"
+        creates: "{{ tomcat_extract_dir }}\\bin"
+
+    - name: Add Tomcat bin to PATH
+      ansible.windows.win_path:
+        elements:
+          - "{{ tomcat_extract_dir }}\\bin"
+        state: present
+
+    - name: Debug resolved Tomcat path
+      ansible.builtin.debug:
+        msg: "Tomcat installed at {{ tomcat_extract_dir }}"
+
+    - name: Verify Tomcat version (via version.bat)
+      ansible.windows.win_command: "{{ tomcat_extract_dir }}\\bin\\version.bat"
+      register: tomcat_version_output
+
+    - name: Show Tomcat version output
+      ansible.builtin.debug:
+        var: tomcat_version_output.stdout
