@@ -86,8 +86,8 @@
     - name: Check if Tomcat service already exists
       win_service_info:
         name: "{{ tomcat_service_name }}"
-      register: tomcat_service_info
-      failed_when: false
+        register: tomcat_service_info
+        failed_when: false
 
     - name: Install Tomcat as Windows Service (if not exists)
       win_command: >
