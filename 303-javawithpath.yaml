@@ -10,14 +10,14 @@
     jdk_zip_url: 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.27%2B6/OpenJDK11U-jdk_x64_windows_hotspot_11.0.27_6.zip'
     jre_zip_url: 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.27%2B6/OpenJDK11U-jre_x64_windows_hotspot_11.0.27_6.zip'
 
-    jdk_zip_path: '{{ java_base_dir }}\\jdk-{{ jdk_version }}.zip'
-    jre_zip_path: '{{ java_base_dir }}\\jre-{{ jdk_version }}.zip'
+    jdk_zip_path: '{{ java_base_dir }}\jdk-{{ jdk_version }}.zip'
+    jre_zip_path: '{{ java_base_dir }}\jre-{{ jdk_version }}.zip'
 
-    jdk_extract_path: '{{ java_base_dir }}\\jdk-{{ jdk_version }}'
-    jre_extract_path: '{{ java_base_dir }}\\jre-{{ jdk_version }}'
+    jdk_extract_path: '{{ java_base_dir }}\jdk-{{ jdk_version }}'
+    jre_extract_path: '{{ java_base_dir }}\jre-{{ jdk_version }}'
 
-    jdk_root_path: '{{ jdk_extract_path }}\\{{ jdk_folder }}'
-    jre_root_path: '{{ jre_extract_path }}\\{{ jre_folder }}'
+    jdk_root_path: '{{ jdk_extract_path }}\{{ jdk_folder }}'
+    jre_root_path: '{{ jre_extract_path }}\{{ jre_folder }}'
 
   tasks:
     - name: Ensure Java base directory exists
@@ -34,7 +34,7 @@
       community.windows.win_unzip:
         src: "{{ jdk_zip_path }}"
         dest: "{{ jdk_extract_path }}"
-        creates: "{{ jdk_root_path }}\\bin"
+        creates: "{{ jdk_root_path }}\bin"
 
     - name: Download JRE zip
       ansible.windows.win_get_url:
@@ -45,7 +45,7 @@
       community.windows.win_unzip:
         src: "{{ jre_zip_path }}"
         dest: "{{ jre_extract_path }}"
-        creates: "{{ jre_root_path }}\\bin"
+        creates: "{{ jre_root_path }}\bin"
 
     - name: Set JAVA_HOME system environment variable to actual JDK directory
       ansible.windows.win_environment:
@@ -57,7 +57,7 @@
     - name: Add JDK bin to system PATH
       ansible.windows.win_path:
         elements:
-          - "{{ jdk_root_path }}\\bin"
+          - "{{ jdk_root_path }}\bin"
         state: present
 
     - name: Debug resolved JAVA_HOME
