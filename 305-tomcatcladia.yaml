@@ -29,7 +29,7 @@
 
     - name: Download Apache Tomcat
       win_get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}-windows-x64.zip"
+        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.102/bin/apache-tomcat-9.0.102-windows-x64.zip"
         dest: "C:\\temp\\apache-tomcat-{{ tomcat_version }}.zip"
         force: no
 
