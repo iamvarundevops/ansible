@@ -84,17 +84,15 @@
       when: tomcat_port != 8080
 
     - name: Check if Tomcat service already exists
-      win_service_info:
-        name: "{{ tomcat_service_name }}"
-        register: tomcat_service_info
-        failed_when: false
+      win_command: powershell.exe -Command "Get-Service -Name '{{ tomcat_service_name }}' -ErrorAction SilentlyContinue"
+      register: tomcat_service_check
+      ignore_errors: true
 
     - name: Install Tomcat as Windows Service (if not exists)
-      win_command: >
-        "{{ tomcat_home }}\\bin\\service.bat" install {{ tomcat_service_name }}
+      win_command: "{{ tomcat_home }}\\bin\\service.bat install {{ tomcat_service_name }}"
       args:
         chdir: "{{ tomcat_home }}\\bin"
-      when: tomcat_service_info.exists is not defined or not tomcat_service_info.exists
+      when: tomcat_service_check.rc != 0
 
 
     - name: Configure Tomcat service startup type
