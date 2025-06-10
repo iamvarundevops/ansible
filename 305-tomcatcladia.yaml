@@ -2,11 +2,11 @@
   hosts: web
   gather_facts: yes
   vars:
-    tomcat_version: "10.1.18"
-    tomcat_major_version: "10"
+    tomcat_version: "9.0.102"
+    tomcat_major_version: "9"
     tomcat_home: "C:\\tomcat"
-    tomcat_service_name: "Tomcat10"
-    java_home: "C:\\Program Files\\Java\\jdk-11.0.20"
+    tomcat_service_name: "Tomcat9"
+    java_home: "C:\\Java\\jdk-11.0.27\\jdk-11.0.27+6"
     tomcat_port: 8080
     tomcat_admin_user: "admin"
     tomcat_admin_password: "admin123"
@@ -27,16 +27,16 @@
         path: "{{ tomcat_home }}"
         state: directory
 
-    - name: Download Apache Tomcat
-      win_get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}-windows-x64.zip"
-        dest: "C:\\temp\\apache-tomcat-{{ tomcat_version }}.zip"
-        force: no
-
     - name: Create temp directory if it doesn't exist
       win_file:
         path: "C:\\temp"
         state: directory
+
+    - name: Download Apache Tomcat
+      win_get_url:
+        url: "https://archive.apache.org/dist/tomcat/tomcat-{{tomcat_major_version}}/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}-windows-x64.zip"
+        dest: "C:\\temp\\apache-tomcat-{{ tomcat_version }}.zip"
+        force: no
 
     - name: Extract Tomcat archive
       win_unzip:
