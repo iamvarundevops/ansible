@@ -6,7 +6,7 @@
     tomcat_major: "9"
     tomcat_base_dir: "C:\\Tomcat"
     tomcat_extract_dir: "{{ tomcat_base_dir }}\\apache-tomcat-{{ tomcat_version }}"
-    tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
+    tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.102/bin/apache-tomcat-9.0.102-windows-x64.zip"
     tomcat_zip_path: "{{ tomcat_base_dir }}\\apache-tomcat-{{ tomcat_version }}.zip"
 
   tasks:
