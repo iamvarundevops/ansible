@@ -1,6 +1,5 @@
 - name: Install OpenJDK 11.0.27 JDK and JRE on Windows
   hosts: web
-  gather_facts: no
   vars:
     java_base_dir: 'C:\Java'
     jdk_version: '11.0.27'
