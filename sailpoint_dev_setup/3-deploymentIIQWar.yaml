@@ -1,0 +1,26 @@
+- name: Deploy identityiq.war to Apache Tomcat
+  hosts: web
+  gather_facts: no
+  vars:
+    war_source: "./files/identityiq.war"   # Relative path on the control node
+    tomcat_webapps_dir: "C:\\tomcat\\webapps"
+    war_dest: "{{ tomcat_webapps_dir }}\\identityiq.war"
+    tomcat_service_name: "Tomcat9"
+
+  tasks:
+    - name: Ensure Tomcat webapps directory exists
+      win_file:
+        path: "{{ tomcat_webapps_dir }}"
+        state: directory
+
+    - name: Upload identityiq.war from control node to Tomcat webapps
+      copy:
+        src: "{{ war_source }}"
+        dest: "{{ war_dest }}"
+      notify: restart tomcat
+
+  handlers:
+    - name: restart tomcat
+      win_service:
+        name: "{{ tomcat_service_name }}"
+        state: restarted
