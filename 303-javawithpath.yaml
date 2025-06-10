@@ -57,7 +57,7 @@
     - name: Add JDK bin to system PATH
       ansible.windows.win_path:
         elements:
-          - "{{ jdk_root_path }}\bin"
+          - "{{ jdk_root_path }}\\bin"
         state: present
 
     - name: Debug resolved JAVA_HOME
