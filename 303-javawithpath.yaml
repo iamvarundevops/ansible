@@ -34,7 +34,7 @@
       community.windows.win_unzip:
         src: "{{ jdk_zip_path }}"
         dest: "{{ jdk_extract_path }}"
-        creates: "{{ jdk_root_path }}\bin"
+        creates: "{{ jdk_root_path }}\\bin"
 
     - name: Download JRE zip
       ansible.windows.win_get_url:
@@ -45,7 +45,7 @@
       community.windows.win_unzip:
         src: "{{ jre_zip_path }}"
         dest: "{{ jre_extract_path }}"
-        creates: "{{ jre_root_path }}\bin"
+        creates: "{{ jre_root_path }}\\bin"
 
     - name: Set JAVA_HOME system environment variable to actual JDK directory
       ansible.windows.win_environment:
