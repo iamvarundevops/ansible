@@ -1,0 +1,51 @@
+- name: Install OpenJDK 11.0.27 JDK and JRE on Windows
+  hosts: web
+  gather_facts: no
+  vars:
+    java_base_dir: 'C:\Java'
+    jdk_version: '11.0.27'
+    jdk_url: 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.27%2B6/OpenJDK11U-jdk_x64_windows_hotspot_11.0.27_6.zip'
+    jre_url: 'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.27%2B6/OpenJDK11U-jre_x64_windows_hotspot_11.0.27_6.zip'
+    jdk_dest: '{{ java_base_dir }}\\jdk-{{ jdk_version }}'
+    jre_dest: '{{ java_base_dir }}\\jre-{{ jdk_version }}'
+
+  tasks:
+    - name: Ensure Java base directory exists
+      ansible.windows.win_file:
+        path: "{{ java_base_dir }}"
+        state: directory
+
+    - name: Download JDK zip
+      ansible.windows.win_get_url:
+        url: "{{ jdk_url }}"
+        dest: "{{ java_base_dir }}\\jdk-{{ jdk_version }}.zip"
+
+    - name: Extract JDK
+      ansible.windows.win_unzip:
+        src: "{{ java_base_dir }}\\jdk-{{ jdk_version }}.zip"
+        dest: "{{ jdk_dest }}"
+        creates: "{{ jdk_dest }}\\bin"
+
+    - name: Download JRE zip
+      ansible.windows.win_get_url:
+        url: "{{ jre_url }}"
+        dest: "{{ java_base_dir }}\\jre-{{ jdk_version }}.zip"
+
+    - name: Extract JRE
+      ansible.windows.win_unzip:
+        src: "{{ java_base_dir }}\\jre-{{ jdk_version }}.zip"
+        dest: "{{ jre_dest }}"
+        creates: "{{ jre_dest }}\\bin"
+
+    - name: Set JAVA_HOME system environment variable
+      ansible.windows.win_environment:
+        name: JAVA_HOME
+        value: "{{ jdk_dest }}"
+        state: present
+        level: machine
+
+    - name: Add JDK bin to system PATH
+      ansible.windows.win_path:
+        elements:
+          - "{{ jdk_dest }}\\bin"
+        state: present
