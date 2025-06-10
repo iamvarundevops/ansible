@@ -20,7 +20,7 @@
         dest: "{{ java_base_dir }}\\jdk-{{ jdk_version }}.zip"
 
     - name: Extract JDK
-      ansible.windows.win_unzip:
+      community.windows.win_unzip:
         src: "{{ java_base_dir }}\\jdk-{{ jdk_version }}.zip"
         dest: "{{ jdk_dest }}"
         creates: "{{ jdk_dest }}\\bin"
@@ -31,7 +31,7 @@
         dest: "{{ java_base_dir }}\\jre-{{ jdk_version }}.zip"
 
     - name: Extract JRE
-      ansible.windows.win_unzip:
+      community.windows.win_unzip:
         src: "{{ java_base_dir }}\\jre-{{ jdk_version }}.zip"
         dest: "{{ jre_dest }}"
         creates: "{{ jre_dest }}\\bin"
