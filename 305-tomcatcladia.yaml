@@ -1,6 +1,5 @@
----
 - name: Install and Configure Apache Tomcat on Windows
-  hosts: windows
+  hosts: web
   gather_facts: yes
   vars:
     tomcat_version: "10.1.18"
