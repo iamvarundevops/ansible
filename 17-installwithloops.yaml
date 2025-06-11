@@ -1,0 +1,13 @@
+- name: intall tomcat, nginx, mysql
+  hosts: web
+  become: true
+  tasks:
+    - name: install multiple packages
+      ansible.builtin.package:
+        name: {{ items}}
+        state: present
+      loop:
+      - tomcat
+      - nginx
+      - mysql-server
+      - git
