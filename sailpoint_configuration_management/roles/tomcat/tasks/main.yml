@@ -1,0 +1,108 @@
+- name: Check if Java is installed
+  win_stat:
+    path: '{{ java_home }}\bin\java.exe'
+  register: java_check
+- name: Fail if Java is not installed
+  fail:
+    msg: Java is not installed at {{ java_home }}. Please install Java first.
+  when: not java_check.stat.exists
+- name: Create Tomcat directory
+  win_file:
+    path: '{{ tomcat_home }}'
+    state: directory
+- name: Create temp directory if it doesn't exist
+  win_file:
+    path: C:\temp
+    state: directory
+- name: Download Apache Tomcat
+  win_get_url:
+    url: https://archive.apache.org/dist/tomcat/tomcat-{{tomcat_major_version}}/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}-windows-x64.zip
+    dest: C:\temp\apache-tomcat-{{ tomcat_version }}.zip
+    force: false
+- name: Extract Tomcat archive
+  win_unzip:
+    src: C:\temp\apache-tomcat-{{ tomcat_version }}.zip
+    dest: C:\temp
+    delete_archive: false
+- name: Copy Tomcat files to installation directory
+  win_copy:
+    src: C:\temp\apache-tomcat-{{ tomcat_version }}\
+    dest: '{{ tomcat_home }}\'
+    remote_src: true
+- name: Set CATALINA_HOME environment variable
+  win_environment:
+    name: CATALINA_HOME
+    value: '{{ tomcat_home }}'
+    level: machine
+- name: Configure Tomcat users (tomcat-users.xml)
+  win_copy:
+    content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<tomcat-users xmlns=\"http://tomcat.apache.org/xml\"\
+      \n              xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  \
+      \            xsi:schemaLocation=\"http://tomcat.apache.org/xml tomcat-users.xsd\"\
+      \n              version=\"1.0\">\n  <role rolename=\"manager-gui\"/>\n  <role\
+      \ rolename=\"manager-script\"/>\n  <role rolename=\"manager-jmx\"/>\n  <role\
+      \ rolename=\"manager-status\"/>\n  <role rolename=\"admin-gui\"/>\n  <role rolename=\"\
+      admin-script\"/>\n  <user username=\"{{ tomcat_admin_user }}\" password=\"{{\
+      \ tomcat_admin_password }}\" \n        roles=\"manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script\"\
+      />\n</tomcat-users>\n"
+    dest: '{{ tomcat_home }}\conf\tomcat-users.xml'
+- name: Configure server.xml for custom port (if different from 8080)
+  win_lineinfile:
+    path: '{{ tomcat_home }}\conf\server.xml'
+    regexp: Connector port="8080"
+    line: '    <Connector port="{{ tomcat_port }}" protocol="HTTP/1.1"'
+  when: tomcat_port != 8080
+- name: Check if Tomcat service already exists
+  win_command: powershell.exe -Command "Get-Service -Name '{{ tomcat_service_name
+    }}' -ErrorAction SilentlyContinue"
+  register: tomcat_service_check
+  ignore_errors: true
+- name: Install Tomcat as Windows Service (if not exists)
+  win_command: '{{ tomcat_home }}\bin\service.bat install {{ tomcat_service_name }}'
+  args:
+    chdir: '{{ tomcat_home }}\bin'
+  when: tomcat_service_check.rc != 0
+- name: Configure Tomcat service startup type
+  win_service:
+    name: '{{ tomcat_service_name }}'
+    start_mode: auto
+    state: started
+- name: Configure Tomcat service to use custom Java options
+  win_command: '"{{ tomcat_home }}\\bin\\tomcat{{ tomcat_major_version }}.exe" //US//{{
+    tomcat_service_name }} --JvmOptions "-Dcatalina.home={{ tomcat_home }};-Dcatalina.base={{
+    tomcat_home }};-Djava.endorsed.dirs={{ tomcat_home }}\\endorsed;-Djava.io.tmpdir={{
+    tomcat_home }}\\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file={{
+    tomcat_home }}\\conf\\logging.properties" --StartMode jvm --StopMode jvm
+
+    '
+- name: Set Tomcat service JVM memory options
+  win_command: '"{{ tomcat_home }}\\bin\\tomcat{{ tomcat_major_version }}.exe" //US//{{
+    tomcat_service_name }} --JvmMs 512 --JvmMx 1024
+
+    '
+- name: Start Tomcat service
+  win_service:
+    name: '{{ tomcat_service_name }}'
+    state: started
+- name: Wait for Tomcat to start
+  win_wait_for:
+    port: '{{ tomcat_port }}'
+    delay: 10
+    timeout: 60
+- name: Create Windows Firewall rule for Tomcat
+  win_firewall_rule:
+    name: Apache Tomcat
+    localport: '{{ tomcat_port }}'
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: true
+- name: Clean up temporary files
+  win_file:
+    path: C:\temp\apache-tomcat-{{ tomcat_version }}.zip
+    state: absent
+- name: Clean up extracted temporary directory
+  win_file:
+    path: C:\temp\apache-tomcat-{{ tomcat_version }}
+    state: absent

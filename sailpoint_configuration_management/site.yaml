@@ -1,0 +1,7 @@
+- name: Configure SailPoint environment
+  hosts: dev
+  become: no
+  roles:
+    - java
+    - tomcat
+    - identityiq

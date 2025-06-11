@@ -1,0 +1,9 @@
+- name: Ensure Tomcat webapps directory exists
+  win_file:
+    path: '{{ tomcat_webapps_dir }}'
+    state: directory
+- name: Upload identityiq.war from control node to Tomcat webapps
+  copy:
+    src: '{{ war_source }}'
+    dest: '{{ war_dest }}'
+  notify: restart tomcat

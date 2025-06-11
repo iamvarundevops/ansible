@@ -1,0 +1,42 @@
+- name: Ensure Java base directory exists
+  ansible.windows.win_file:
+    path: '{{ java_base_dir }}'
+    state: directory
+- name: Download JDK zip
+  ansible.windows.win_get_url:
+    url: '{{ jdk_zip_url }}'
+    dest: '{{ jdk_zip_path }}'
+- name: Extract JDK
+  community.windows.win_unzip:
+    src: '{{ jdk_zip_path }}'
+    dest: '{{ jdk_extract_path }}'
+    creates: '{{ jdk_root_path }}\bin'
+- name: Download JRE zip
+  ansible.windows.win_get_url:
+    url: '{{ jre_zip_url }}'
+    dest: '{{ jre_zip_path }}'
+- name: Extract JRE
+  community.windows.win_unzip:
+    src: '{{ jre_zip_path }}'
+    dest: '{{ jre_extract_path }}'
+    creates: '{{ jre_root_path }}\bin'
+- name: Set JAVA_HOME system environment variable to actual JDK directory
+  ansible.windows.win_environment:
+    name: JAVA_HOME
+    value: '{{ jdk_root_path }}'
+    state: present
+    level: machine
+- name: Add JDK bin to system PATH
+  ansible.windows.win_path:
+    elements:
+    - '{{ jdk_root_path }}\bin'
+    state: present
+- name: Debug resolved JAVA_HOME
+  ansible.builtin.debug:
+    msg: JAVA_HOME is being set to {{ jdk_root_path }}
+- name: Verify Java version
+  ansible.windows.win_command: java -version
+  register: java_version_output
+- name: Show Java version output
+  ansible.builtin.debug:
+    var: java_version_output.stdout
