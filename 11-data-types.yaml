@@ -19,7 +19,7 @@
       - iam 
       - ec2
       - s3
-    tasks:
-      - name: print the course information
-        ansible.builtin.debug:
-          msg: "I am learning Course: {{ course }} with duration {{ duration }} days and topics are {{ topics }}. live session {{ live }}, covered tools are {{  tools }}"
+  tasks:
+    - name: print the course information
+      ansible.builtin.debug:
+        msg: "I am learning Course: {{ course }} with duration {{ duration }} days and topics are {{ topics }}. live session {{ live }}, covered tools are {{  tools }}"
