@@ -2,7 +2,7 @@
   hosts: local
   vars_prompt:
   - name: number
-    promprt: "Enter a number"
+    prompt: "Enter a number"
     private: false
   tasks:
     - name: check if number is less than 10
