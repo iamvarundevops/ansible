@@ -6,7 +6,11 @@
       ansible.builtin.command:    id expense
       register: USER #here USER Is the variable that holds  output of above command
       ignore_errors: yes #if user does not exist then it will not fail the playbook
-      
+
     - name: print the user information
       ansible.builtin.debug:
           msg: output is {{ USER }}
+          
+    - name: create user
+      ansible.builtin.command: useradd expense
+      when: USER.rc != 0 #if user does not exist then create user
