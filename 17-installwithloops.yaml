@@ -4,7 +4,7 @@
   tasks:
     - name: install multiple packages
       ansible.builtin.package:
-        name: {{ items}}
+        name: " {{ items}} "
         state: present
       loop:
       - tomcat
