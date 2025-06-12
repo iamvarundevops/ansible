@@ -62,6 +62,15 @@
   args:
     chdir: '{{ tomcat_home }}\bin'
   when: tomcat_service_check.rc != 0
+
+- name: Set JVM path explicitly for Tomcat service
+  win_command: >
+    "{{ tomcat_home }}\\bin\\tomcat{{ tomcat_major_version }}.exe"
+    //US//{{ tomcat_service_name }}
+    --Jvm "{{ java_home }}\\bin\\server\\jvm.dll"
+  args:
+    chdir: '{{ tomcat_home }}\\bin'
+
 - name: Configure Tomcat service to use custom Java options
   win_command: '"{{ tomcat_home }}\\bin\\tomcat{{ tomcat_major_version }}.exe" //US//{{
     tomcat_service_name }} --JvmOptions "-Dcatalina.home={{ tomcat_home }};-Dcatalina.base={{
@@ -80,7 +89,7 @@
     name: '{{ tomcat_service_name }}'
     start_mode: auto
     state: started
-    
+
 - name: Start Tomcat service
   win_service:
     name: '{{ tomcat_service_name }}'
