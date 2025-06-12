@@ -62,11 +62,6 @@
   args:
     chdir: '{{ tomcat_home }}\bin'
   when: tomcat_service_check.rc != 0
-- name: Configure Tomcat service startup type
-  win_service:
-    name: '{{ tomcat_service_name }}'
-    start_mode: auto
-    state: started
 - name: Configure Tomcat service to use custom Java options
   win_command: '"{{ tomcat_home }}\\bin\\tomcat{{ tomcat_major_version }}.exe" //US//{{
     tomcat_service_name }} --JvmOptions "-Dcatalina.home={{ tomcat_home }};-Dcatalina.base={{
@@ -80,6 +75,12 @@
     tomcat_service_name }} --JvmMs 512 --JvmMx 1024
 
     '
+- name: Configure Tomcat service startup type
+  win_service:
+    name: '{{ tomcat_service_name }}'
+    start_mode: auto
+    state: started
+    
 - name: Start Tomcat service
   win_service:
     name: '{{ tomcat_service_name }}'
