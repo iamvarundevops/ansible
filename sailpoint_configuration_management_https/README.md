@@ -126,3 +126,43 @@ This configures:
 
 ⚠️ Ensure this is used only in **trusted/internal environments**.
 For production, prefer HTTPS with a signed certificate.
+
+
+---
+
+## 🔐 WinRM over HTTPS (Recommended for Production)
+
+To configure a Windows machine for secure WinRM access over HTTPS:
+
+### 1. Download and run the PowerShell script
+
+[Download enable_winrm_https.ps1](./enable_winrm_https.ps1)
+
+### 2. On the Windows target:
+
+- Open PowerShell as Administrator
+- Run:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope Process
+cd C:\Path\To\Script
+.\enable_winrm_https.ps1
+```
+
+This script:
+- Creates a self-signed certificate valid for 5 years
+- Binds it to WinRM HTTPS listener on port 5986
+- Opens the Windows firewall for port 5986
+
+### 3. Update your Ansible inventory
+
+In `inventory.ini`, update `[windows:vars]`:
+
+```ini
+ansible_connection=winrm
+ansible_port=5986
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+```
+
+> ⚠️ For production, consider using a certificate issued by a trusted internal or public CA.

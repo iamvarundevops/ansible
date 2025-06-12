@@ -1,0 +1,51 @@
+- name: Install Temurin 11 JDK/JRE on Windows servers
+  hosts: web
+  gather_facts: false  # set to true if you need facts for conditionals
+  vars:
+    java_jdk_package_name: temurin11     # roles/java/defaults/main.yml
+    java_jre_package_name: temurin11jre
+    java_package_version: "11.0.27"  # pin version for idempotency
+    java_home_components: # Build JAVA_HOME safely using Windows path_join filter
+      - 'C:\\Program Files'
+      - 'Eclipse Foundation'
+      - "jdk-{{ java_package_version }}"
+    java_home: "{{ java_home_components | ansible.windows.path_join }}"
+    tomcat_service_name: Tomcat9  # Service name for Tomcat (override in inventory/group_vars if different)
+  tasks:
+    - name: Ensure Chocolatey is installed (required for JDK/JRE install) # roles/java/tasks/main.yml
+      ansible.windows.win_chocolatey:
+        name: chocolatey
+        state: present
+
+    - name: Install Temurin 11 **JDK** via Chocolatey
+      ansible.windows.win_chocolatey:
+        name: "{{ java_jdk_package_name }}"
+        version: "{{ java_package_version }}"
+        state: present
+      register: jdk_install
+
+    - name: Install Temurin 11 **JRE** via Chocolatey
+      ansible.windows.win_chocolatey:
+        name: "{{ java_jre_package_name }}"
+        version: "{{ java_package_version }}"
+        state: present
+      register: jre_install
+
+    - name: Set system‑wide JAVA_HOME (only if JDK changed)
+      ansible.windows.win_environment:
+        state: present
+        level: machine
+        name: JAVA_HOME
+        value: "{{ java_home }}"
+      when: jdk_install.changed
+      notify: Restart Tomcat
+
+    - name: Ensure Java bin is on the system PATH
+      ansible.windows.win_environment:
+        state: present
+        level: machine
+        name: Path
+        delimiter: ';'
+        value: "{{ java_home }}\\bin"
+      when: jdk_install.changed and ("{{ java_home }}\\bin" not in ansible_env.Path)
+      notify: Restart Tomcat

@@ -1,0 +1,4 @@
+war_source: ./files/identityiq.war
+tomcat_webapps_dir: C:\tomcat\webapps
+war_dest: '{{ tomcat_webapps_dir }}\identityiq.war'
+tomcat_service_name: Tomcat9

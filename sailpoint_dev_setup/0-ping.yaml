@@ -1,0 +1,7 @@
+- name: Test win_ping on Windows
+  hosts: web
+  tasks:
+    - name: WinRM ping
+      ansible.windows.win_ping:
+    - name: Gather Windows facts
+      ansible.windows.setup:
