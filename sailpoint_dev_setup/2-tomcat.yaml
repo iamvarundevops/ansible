@@ -1,10 +1,10 @@
 - name: Install and Configure Apache Tomcat on Windows
-  hosts: web
+  hosts: dev
   gather_facts: yes
   vars:
     tomcat_version: "9.0.102"
     tomcat_major_version: "9"
-    tomcat_home: "C:\\tomcat"
+    tomcat_home: "C:\\tomcat" 
     tomcat_service_name: "Tomcat9"
     java_home: "C:\\Java\\jdk-11.0.27\\jdk-11.0.27+6"
     tomcat_port: 8080
